@@ -6,7 +6,15 @@ namespace Server
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            try
+            {
+                Server server = new Server("127.0.0.1", 8008);
+                server.Work();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }
