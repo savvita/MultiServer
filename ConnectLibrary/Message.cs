@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
 
@@ -36,6 +37,35 @@ namespace ConnectLibrary
             {
                 throw;
             }
+        }
+
+        public static void SendFile(Socket socket, string path)
+        {
+            try
+            {
+                socket.Send(File.ReadAllBytes(path));
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public static void ReceiveFile(Socket socket)
+        {
+            byte[] buffer = new byte[BufferSize];
+            int count = 0;
+
+            FileStream file = new FileStream(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "file"),
+                FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
+
+            do
+            {
+                count = socket.Receive(buffer);
+                file.Write(buffer, 0, count);
+            } while (socket.Available > 0);
+
+            file.Close();
         }
     }
 }

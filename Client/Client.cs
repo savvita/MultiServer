@@ -33,6 +33,8 @@ namespace Client
 
             Console.WriteLine("Connected to the server");
 
+            Message.ReceiveFile(socket);
+
             do
             {
                 Console.Write("Msg: ");
