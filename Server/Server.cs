@@ -63,12 +63,13 @@ namespace Server
 
             try
             {
+                Message.SendFile(socketClient, @"D:\Images\Wallpaper\eeaa52b78a89866490ac3bf817cd2bcf.jpg");
+
                 do
                 {
                     if (isEnd)
                         break;
 
-                    Message.SendFile(socketClient, @"D:\Images\Wallpaper\eeaa52b78a89866490ac3bf817cd2bcf.jpg");
 
                     string msg = Message.ReceiveMessage(socketClient);
                     Console.WriteLine($"Client {Thread.CurrentThread.ManagedThreadId} : {msg}");

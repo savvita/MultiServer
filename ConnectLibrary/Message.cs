@@ -43,6 +43,8 @@ namespace ConnectLibrary
         {
             try
             {
+                SendMessage(socket, Path.GetFileName(path));
+                ReceiveMessage(socket);
                 socket.Send(File.ReadAllBytes(path));
             }
             catch
@@ -53,10 +55,13 @@ namespace ConnectLibrary
 
         public static void ReceiveFile(Socket socket)
         {
+            string fileName = ReceiveMessage(socket);
+            SendMessage(socket, "Ok");
+
             byte[] buffer = new byte[BufferSize];
             int count = 0;
 
-            FileStream file = new FileStream(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "file"),
+            FileStream file = new FileStream(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), fileName),
                 FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
 
             do
