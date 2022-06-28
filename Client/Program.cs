@@ -6,7 +6,15 @@ namespace Client
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            try
+            {
+                Client client = new Client("127.0.0.1", 8008);
+                client.StartChating();
+            }
+            catch
+            {
+                Console.WriteLine("Cannot connect to the server");
+            }
         }
     }
 }
