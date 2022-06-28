@@ -33,14 +33,18 @@ namespace Client
 
             Console.WriteLine("Connected to the server");
 
-            Message.ReceiveFile(socket);
-
             do
             {
                 Console.Write("Msg: ");
                 string msg = Console.ReadLine();
-
                 Message.SendMessage(socket, msg);
+
+                if(msg.StartsWith(Message.UploadCode))
+                {
+                    Task.Factory.StartNew(() =>
+                    Message.SendFile(socket, msg.Substring(Message.UploadCode.Length).Trim()));
+                }
+
                 Console.WriteLine($"Server: {Message.ReceiveMessage(socket)}");
 
                 if (((socket.Poll(1000, SelectMode.SelectRead) && (socket.Available == 0)) || !socket.Connected))

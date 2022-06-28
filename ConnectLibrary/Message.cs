@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -12,6 +13,7 @@ namespace ConnectLibrary
         public static string StopCode { get; set; } = "/end";
         public static string DateCode { get; set; } = "/date";
         public static string TimeCode { get; set; } = "/time";
+        public static string UploadCode { get; set; } = "/upload";
         public static string ReceiveMessage(Socket socket)
         {
             byte[] buffer = new byte[BufferSize];
@@ -43,8 +45,7 @@ namespace ConnectLibrary
         {
             try
             {
-                SendMessage(socket, Path.GetFileName(path));
-                ReceiveMessage(socket);
+                SendMessage(socket, Path.GetExtension(path));
                 socket.Send(File.ReadAllBytes(path));
             }
             catch
@@ -55,14 +56,15 @@ namespace ConnectLibrary
 
         public static void ReceiveFile(Socket socket)
         {
-            string fileName = ReceiveMessage(socket);
-            SendMessage(socket, "Ok");
+            string ext = ReceiveMessage(socket);
 
             byte[] buffer = new byte[BufferSize];
             int count = 0;
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), 
+                $"{(socket.LocalEndPoint as IPEndPoint).Address.ToString()} - {DateTime.Now.ToString().Replace(':','.')}.{ext}");
 
-            FileStream file = new FileStream(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), fileName),
-                FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
+            FileStream file = new FileStream(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), path),
+                FileMode.Create, FileAccess.ReadWrite, FileShare.None);
 
             do
             {
