@@ -68,6 +68,7 @@ namespace Server
                     if (isEnd)
                         break;
 
+
                     string msg = Message.ReceiveMessage(socketClient);
                     Console.WriteLine($"Client {Thread.CurrentThread.ManagedThreadId} : {msg}");
 
@@ -75,7 +76,7 @@ namespace Server
 
                     if (msg.StartsWith("/"))
                     {
-                        response = HandleCommand(msg, out isEnd);
+                        response = HandleCommand(socketClient, msg, out isEnd);
                     }
 
                     else
@@ -100,7 +101,7 @@ namespace Server
             }
         }
 
-        private string HandleCommand(string command, out bool isEnd)
+        private string HandleCommand(Socket clientSocket, string command, out bool isEnd)
         {
             string response = String.Empty;
             isEnd = false;
@@ -117,6 +118,20 @@ namespace Server
             else if (command.Equals(Message.TimeCode))
             {
                 response = DateTime.Now.ToShortTimeString();
+            }
+            else if(command.StartsWith(Message.UploadCode))
+            {
+                string[] cols = command.Split(' ');
+
+                try
+                {
+                    Message.ReceiveFile(clientSocket);
+                    response = "Loading";
+                }
+                catch
+                {
+                    throw;
+                }
             }
             else
             {
