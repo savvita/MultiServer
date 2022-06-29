@@ -10,6 +10,8 @@ namespace ConnectLibrary
     {
         public static int BufferSize { get; set; } = 256;
         public static Encoding Encoding { get; set; } = Encoding.Unicode;
+
+        public static string ServerFolder { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ServerFiles");
         public static string StopCode { get; set; } = "/end";
         public static string DateCode { get; set; } = "/date";
         public static string TimeCode { get; set; } = "/time";
@@ -56,14 +58,19 @@ namespace ConnectLibrary
 
         public static void ReceiveFile(Socket socket)
         {
+            if(!Directory.Exists(ServerFolder))
+            {
+                Directory.CreateDirectory(ServerFolder);
+            }
+
             string ext = ReceiveMessage(socket);
 
             byte[] buffer = new byte[BufferSize];
             int count = 0;
-            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), 
+            string path = Path.Combine(ServerFolder, 
                 $"{(socket.LocalEndPoint as IPEndPoint).Address.ToString()} - {DateTime.Now.ToString().Replace(':','.')}.{ext}");
 
-            FileStream file = new FileStream(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), path),
+            FileStream file = new FileStream(path,
                 FileMode.Create, FileAccess.ReadWrite, FileShare.None);
 
             do

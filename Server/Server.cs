@@ -70,7 +70,7 @@ namespace Server
 
 
                     string msg = Message.ReceiveMessage(socketClient);
-                    Console.WriteLine($"Client {Thread.CurrentThread.ManagedThreadId} : {msg}");
+                    Console.WriteLine($"Client {Thread.CurrentThread.ManagedThreadId}: {msg}");
 
                     string response = String.Empty;
 
@@ -84,7 +84,7 @@ namespace Server
                         response = "Message receive";
                     }
 
-                    Message.SendMessage(socketClient, response);
+                    SendResponse(socketClient, response);
 
                 } while (true);
             }
@@ -126,7 +126,7 @@ namespace Server
                 try
                 {
                     Message.ReceiveFile(clientSocket);
-                    response = "Loading";
+                    response = "Uploaded";
                 }
                 catch
                 {
@@ -139,6 +139,11 @@ namespace Server
             }
 
             return response;
+        }
+
+        private void SendResponse(Socket socket, string message)
+        {
+            Message.SendMessage(socket, $"[{DateTime.Now.ToShortTimeString()}]: {message}");
         }
     }
 }
